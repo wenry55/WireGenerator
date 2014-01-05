@@ -1,0 +1,12 @@
+﻿
+#set ($cols = $table.columns)
+
+Table : $table.name has following columns
+#foreach ($col in $cols) 
+$col.columnName
+#if ($col.columnType == "Choice")
+#foreach ($choice in $col.choices)
+<select>$choice</select>
+#end   
+#end
+#end

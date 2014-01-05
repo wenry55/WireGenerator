@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tables>
+  <table name="Project1">
+    <columns>
+      <column name="Name" type="SingleLine"/>
+      <column name="FirstValue" type="Choice">
+        <choices>
+          <choice name="Answer1" value="1"/>
+          <choice name="Answer2" value="2"/>
+        </choices>
+      </column>
+    </columns>
+  </table>
+
+  <table name="Project2">
+    <columns>
+      <column name="P2Name" type="SingleLine"/>
+      <column name="P2Value" type="Choice">
+        <choices>
+          <choice name="Answer1" value="1"/>
+          <choice name="Answer2" value="2"/>
+        </choices>
+      </column>
+    </columns>
+  </table>
+  
+</tables>

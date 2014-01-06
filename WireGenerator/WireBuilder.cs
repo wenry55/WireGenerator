@@ -31,34 +31,6 @@ using WireGenerator.classes;
 
 namespace WireGenerator
 {
-    public class TestCls
-    {
-        private string _aa;
-        public string aa
-        {
-            get
-            {
-                return _aa;
-            }
-            set
-            {
-                _aa = value;
-            }
-        }
-        public string bb;
-        public string cc;
-
-        
-        
-    }
-
-        
-    public class Item
-    {
-        public string Name { get; set; }
-        public string Value { get; set; }
-    }
-
 
     public partial class WireBuilder : Form
     {
@@ -70,36 +42,36 @@ namespace WireGenerator
         private void WireBuilder_Load(object sender, EventArgs e)
         {
             StreamWriter sw = null;
-            TestCls txt = new TestCls() { aa = "11", bb = "22", cc = "33" };
-            List<string> xstrx = new List<string>();
-            xstrx.Add("first");
-            xstrx.Add("second");
+            //TestCls txt = new TestCls() { aa = "11", bb = "22", cc = "33" };
+            //List<string> xstrx = new List<string>();
+            //xstrx.Add("first");
+            //xstrx.Add("second");
 
-            try
-            {
-                VelocityEngine vengine = new VelocityEngine();
-                vengine.Init();
+            //try
+            //{
+            //    VelocityEngine vengine = new VelocityEngine();
+            //    vengine.Init();
 
-                VelocityContext context = new VelocityContext();
-                context.Put("name", "bk"); 
-                context.Put("testcls", txt);
-                context.Put("strlst", xstrx);
-                context.Put("xxx", 111);
+            //    VelocityContext context = new VelocityContext();
+            //    context.Put("name", "bk"); 
+            //    context.Put("testcls", txt);
+            //    context.Put("strlst", xstrx);
+            //    context.Put("xxx", 111);
 
-                sw = new StreamWriter(@"c:\tmp\test4.txt");
-                string path = @"..\..\vm\test.vm";
-                StreamReader sr = new StreamReader(path);
-                string templateString = sr.ReadToEnd();
-                sr.Close();
-                vengine.Evaluate(context, sw, null, templateString);
-                sw.Close();
-            }
-            catch (System.Exception ex)
-            {
+            //    sw = new StreamWriter(@"c:\tmp\test4.txt");
+            //    string path = @"..\..\vm\test.vm";
+            //    StreamReader sr = new StreamReader(path);
+            //    string templateString = sr.ReadToEnd();
+            //    sr.Close();
+            //    vengine.Evaluate(context, sw, null, templateString);
+            //    sw.Close();
+            //}
+            //catch (System.Exception ex)
+            //{
 
-                sw.Close();
-                MessageBox.Show(ex.Message);
-            }
+            //    sw.Close();
+            //    MessageBox.Show(ex.Message);
+            //}
 
             /*
             SqlCeConnection conn = new SqlCeConnection();

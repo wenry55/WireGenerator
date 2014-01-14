@@ -23,6 +23,40 @@ namespace ConsoleWire.Entity
         }
 
         public string name { get; set; }
+        public string key
+        {
+            get
+            {
+                string result = string.Empty;
+                foreach (DbColumn col in _columns)
+                {
+                    if (col.isKey == true)
+                    {
+                        result = col.columnName;
+                    }
+                }
+                return result;
+            }
+        }
 
+        public string paramName
+        {
+            get
+            {
+                return char.ToLower(name[0]) + name.Substring(1);
+            }
+        }
+
+        public string paramKey
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(key)) { return string.Empty; }
+                else
+                {
+                    return char.ToLower(key[0]) + key.Substring(1);
+                }
+            }
+        }
     }
 }

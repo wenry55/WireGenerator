@@ -1,0 +1,159 @@
+﻿#set ($cols = $table.columns)
+
+
+// DTO
+    [DataContract]
+    public class ${table.name}Dto
+    {
+#foreach ($col in $cols) 
+        [DataMember]
+        public string $col.columnName;
+#end
+    }
+
+// Interface.cs
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "${table.name}/{${table.paramKey}")]
+        ${table.name}Dto Get${table.name}(string ${table.paramKey});
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "${table.name}")]
+        List<${table.name}Dto> GetAll${table.name}();
+
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "${table.name}")]
+        bool Save${table.name}(${table.name}Dto prod);
+
+        [OperationContract]
+        [WebInvoke(Method = "DELETE",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "${table.name}/{${table.paramKey}")]
+        bool Remove${table.name}(string ${table.paramKey});
+
+// Service.cs
+
+        public ${table.name}Dto GetProduct(string ${table.paramKey})
+        {
+            string connStr = "Server=REVEAL-DEV;Database=reveal_dev_ovi;User ID=sa;Password=Reveal1!;Trusted_Connection=False;";
+            SqlConnection connection = new SqlConnection(connStr);
+            connection.Open();
+            SqlCommand comm = new SqlCommand("select * from ${table.name} where ${table.paramKey} = @${table.paramKey}", connection);
+            try
+            {
+                comm.Parameters.AddWithValue("@${table.key}", int.Parse(${table.paramKey}));
+                SqlDataReader reader = comm.ExecuteReader();
+                ${table.name}Dto obj = new ${table.name}Dto();
+                if (reader.Read())
+                {
+                    obj.${table.key} = reader.GetInt32(0).ToString();
+                    obj.ProductName = reader.GetString(1);
+                    obj.ProductOwner = reader.GetString(2);
+                }
+
+                comm.Dispose();
+                comm = null;
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString(), ex);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        public List<${table.name}Dto> GetAllProducts()
+        {
+            string connStr = "Server=REVEAL-DEV;Database=reveal_dev_ovi;User ID=sa;Password=Reveal1!;Trusted_Connection=False;";
+            SqlConnection connection = new SqlConnection(connStr);
+            connection.Open();
+            SqlCommand comm = new SqlCommand("select * from ${table.name}", connection);
+            try
+            {
+                SqlDataReader reader = comm.ExecuteReader();
+                List<${table.name}Dto> result = new List<${table.name}Dto>();
+                while (reader.Read())
+                {
+                    ${table.name}Dto obj = new ${table.name}Dto();
+                    obj.${table.key} = reader.GetInt32(0).ToString();
+                    obj.ProductName = reader.GetString(1);
+                    obj.ProductOwner = reader.GetString(2);
+                    result.Add(obj);
+                }
+
+                comm.Dispose();
+                comm = null;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString(), ex);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        public bool SaveProduct(${table.name}Dto prod)
+        {
+            string connStr = "Server=REVEAL-DEV;Database=reveal_dev_ovi;User ID=sa;Password=Reveal1!;Trusted_Connection=False;";
+            SqlConnection connection = new SqlConnection(connStr);
+            connection.Open();
+            SqlCommand comm = new SqlCommand("INSERT INTO Product VALUES (@ProductName, @ProductOwner)", connection);
+            try
+            {
+                comm.Parameters.AddWithValue("@ProductName", prod.ProductName.Trim());
+                comm.Parameters.AddWithValue("@ProductOwner", prod.ProductOwner.Trim());
+                comm.ExecuteNonQuery();
+                comm.Dispose();
+                comm = null;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString(), ex);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        public bool RemoveProduct(string ${table.paramKey})
+        {
+            string connStr = "Server=REVEAL-DEV;Database=reveal_dev_ovi;User ID=sa;Password=Reveal1!;Trusted_Connection=False;";
+            SqlConnection connection = new SqlConnection(connStr);
+            connection.Open();
+            SqlCommand comm = new SqlCommand("DELETE FROM Product WHERE ${table.key} = @${table.key}", connection);
+            try
+            {
+                comm.Parameters.AddWithValue("@${table.key}", ${table.paramKey}.Trim());
+                comm.ExecuteNonQuery();
+                comm.Dispose();
+                comm = null;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString(), ex);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+

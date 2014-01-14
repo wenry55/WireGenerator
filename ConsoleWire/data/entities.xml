@@ -1,14 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <tables>
-  <table name="Project1">
+  <table name="Product">
     <columns>
-      <column name="Name" type="SingleLine"/>
-      <column name="FirstValue" type="Choice">
-        <choices>
-          <choice name="Answer1" value="1"/>
-          <choice name="Answer2" value="2"/>
-        </choices>
-      </column>
+      <column name="ProductID" type="SingleLine" isKey="true"/>
+      <column name="ProductName" type="SingleLine"/>
+      <column name="ProductOwner" type="SingleLine"/>
     </columns>
   </table>
 

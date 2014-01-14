@@ -1,0 +1,181 @@
+﻿#set ($cols = $table.columns)
+#set ($url = "http://localhost:3133/UserService.svc/web/Product")
+#set ($listViewName = "${table.name}ListView")
+
+<!doctype html>
+<html lang="en" data-framework="backbonejs">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Backbone for Element.</title>
+    <link rel="stylesheet" href="bower_components/todomvc-common/base.css">
+</head>
+<body>
+    <script src="bower_components/todomvc-common/base.js"></script>
+    <script src="bower_components/jquery/jquery.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
+    <script src="bower_components/backbone/backbone.js"></script>
+    <script src="bower_components/backbone.localStorage/backbone.localStorage.js"></script>
+
+    <div id="header"></div>
+
+    <div id="contentDiv"></div>
+
+    <script id="headerTemplate" type="text/template">
+        <div>
+#foreach ($col in $cols)
+            <label for="${col.columnName}">${col.columnName}: </label>
+            <input id="${col.columnName}" type="text" />
+#end          
+            <button id="addItem">[Add]</button>
+        </div>
+    </script>
+
+    <script id="listTemplate" type="text/template">
+        <li>
+#foreach ($col in $cols)
+        <%= $col.columnName %> /
+#end              
+        <button class="delete">Delete</button>
+    </li>
+
+    </script>
+    <script type="text/javascript">
+        var app = app || {};
+
+        (function () {
+            app.${table.name} = Backbone.Model.extend({
+                urlRoot: "$url",
+
+                defaults: {
+                    id: null,
+#foreach ($col in $cols)
+                    "$col.columnName": "$col.columnName",
+#end                               
+                },
+
+                idAttribute: '${table.key}'
+            });
+
+            app.${table.name}List = Backbone.Collection.extend({
+                model: app.${table.name},
+                url: "$url",
+                initialize: function () {
+                    // this.bind('add', this.save, this);
+                },
+                save: function () {
+                    console.log("save called...");
+                }
+            });
+
+            app.HeaderView = Backbone.View.extend({
+                template: _.template($('#headerTemplate').html()),
+
+                initialize: function () {
+                    this.render();
+                },
+
+                render: function () {
+                    $(this.el).html(this.template());
+                    return this;
+                },
+
+                events: {
+                    "click #addItem": "doAdd"
+                },
+
+                doAdd: function () {
+                    console.log("Add clicked.");
+
+                    productListView.collection.create({ ProductName: $('#ProductName').val(), ProductOwner: $('#ProductOwner').val() }, {
+                        success: function (response) {
+                            console.log('created successfully.');
+                            productListView. $el .html('');
+                            productListView.render();
+
+                        }
+                    });
+
+
+                }
+            });
+
+            app.ProductView = Backbone.View.extend({
+                tagName: 'div',
+                template: _.template($('#listTemplate').html()),
+                render: function () {
+                    this. $el .html(this.template(this.model.toJSON()));
+                    return this;
+                },
+
+                events: {
+                    "click .save": "save${table.name}",
+                    "click .delete": "delete${table.name}",
+                    "change input": "change${table.name}"
+                },
+
+                saveProduct: function () {
+                    console.log("add clicked...");
+                    if (this.model.isNew()) {
+                        // new
+                        console.log("this is new...");
+                    } else {
+                        // existing
+                        console.log("this is old...");
+                    }
+                },
+
+                deleteProduct: function () {
+                    this.model.destroy();
+                    productListView. $el .html('');
+                    productListView.render();
+                }
+            });
+
+            app.ProductListView = Backbone.View.extend({
+
+                el: '#contentDiv',
+
+                initialize: function (initialProducts) {
+
+                    this.collection = new app.ProductList(initialProducts);
+                    this.collection.fetch({
+                        success: _.bind(function (collection, response) {
+                            this.collection = collection;
+                            this.render();
+                        }, this)
+                    });
+
+                    this.collection.bind('reset', this.onReset, this);
+                },
+
+                onReset: function () {
+                    console.log('reset occurred.');
+                    this.render();
+                },
+
+                render: function () {
+                    this.collection.each(function (anItem) {
+                        this.renderItem(anItem);
+                    }, this);
+
+
+                },
+
+                renderItem: function (anItem) {
+                    var productView = new app.ProductView({
+                        model: product
+                    });
+                    this. $el .append(productView.render().el);
+                },
+
+
+            });
+
+            window.productListView = new app.ProductListView();
+            $('#header').html(new app.HeaderView().render().el);
+
+        })();
+    </script>
+</body>
+</html>

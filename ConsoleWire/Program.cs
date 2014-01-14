@@ -64,6 +64,7 @@ namespace ConsoleWire
                                 dbCol.choices.Add(aChoice.Attribute("name").Value);
                             }
                         }
+                        dbCol.isKey = aCol.Attribute("isKey") != null ? Boolean.Parse(aCol.Attribute("isKey").Value) : false;
 
                         tbl.columns.Add(dbCol);
                     }
@@ -71,12 +72,31 @@ namespace ConsoleWire
                     // do merge for each table
                     VelocityContext context = new VelocityContext();
                     context.Put("table", tbl);
+                    string templateString = string.Empty;
+                    StreamReader sr = null;
 
-                    sw = new StreamWriter(@"c:\tmp\" + tbl.name.Trim() + ".txt");
-                    string path = @"..\..\vm\test2.vm";
+                    //// client side
+                    //sw = new StreamWriter(@"c:\tmp\" + tbl.name.Trim() + ".html");
+                    //StreamReader sr = new StreamReader(@"..\..\vm\SigmaClient.vm");
+                    //templateString = sr.ReadToEnd();
+                    //sr.Close();
 
-                    StreamReader sr = new StreamReader(path);
-                    string templateString = sr.ReadToEnd();
+                    //vengine.Evaluate(context, sw, null, templateString);
+                    //sw.Close();
+
+                    // server side
+                    sw = new StreamWriter(@"c:\tmp\" + tbl.name.Trim() + ".cs");
+                    sr = new StreamReader(@"..\..\vm\SigmaServer.vm");
+                    templateString = sr.ReadToEnd();
+                    sr.Close();
+
+                    vengine.Evaluate(context, sw, null, templateString);
+                    sw.Close();
+
+                    // server side
+                    sw = new StreamWriter(@"c:\tmp\" + tbl.name.Trim() + ".html");
+                    sr = new StreamReader(@"..\..\vm\SigmaClient.vm");
+                    templateString = sr.ReadToEnd();
                     sr.Close();
 
                     vengine.Evaluate(context, sw, null, templateString);

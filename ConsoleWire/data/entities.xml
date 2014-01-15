@@ -2,9 +2,10 @@
 <tables>
   <table name="Product">
     <columns>
-      <column name="ProductID" type="SingleLine" isKey="true"/>
+      <column name="ProductID" type="SingleLine" isKey="true" isIdentity="true"/>
       <column name="ProductName" type="SingleLine"/>
       <column name="ProductOwner" type="SingleLine"/>
+      <column name="ProductBK" type="SingleLine"/>
     </columns>
   </table>
 
@@ -19,5 +20,18 @@
       </column>
     </columns>
   </table>
-  
+
+  <table name="libpipemanhour">
+    <columns>
+      <column name="LibPipeManhourID" type="SingleLine" dataType="int"/>
+      <column name="LibTypeLUID" type="SingleLine" dataType="int" />
+      <column name="MaterialTypeLUID" type="SingleLine" dataType="int" />
+      <column name="PipeSize" type="SingleLine" dataType="decimal" />
+      <column name="PipeClass" type="SingleLine" dataType="string" />
+      <column name="PipeSCH" type="SingleLine" dataType="string" />
+      <column name="Manhours" type="SingleLine" dataType="decimal" />
+      <column name="CostCodeID" type="SingleLine" dataType="int" />
+    </columns>
+  </table>
+
 </tables>

@@ -26,6 +26,7 @@
 #foreach ($col in $cols)
             <label for="${col.columnName}">${col.columnName}: </label>
             <input id="${col.columnName}" type="text" />
+#if ($foreach.hasNext == true) ooo #end
 #end          
             <button id="addItem">[Add]</button>
         </div>
@@ -87,11 +88,17 @@
                 doAdd: function () {
                     console.log("Add clicked.");
 
-                    productListView.collection.create({ ProductName: $('#ProductName').val(), ProductOwner: $('#ProductOwner').val() }, {
+                    ${table.paramListViewName}.collection.create({ 
+#foreach ($col in $cols)                    
+#if ($col.isKey != true)
+                      $col.columnName: $('#$col.columnName').val(), 
+#end                      
+#end                      
+                    }, {
                         success: function (response) {
                             console.log('created successfully.');
-                            productListView. $el .html('');
-                            productListView.render();
+                            ${table.paramListViewName}. $el .html('');
+                            ${table.paramListViewName}.render();
 
                         }
                     });
@@ -100,7 +107,7 @@
                 }
             });
 
-            app.ProductView = Backbone.View.extend({
+            app.${table.viewName} = Backbone.View.extend({
                 tagName: 'div',
                 template: _.template($('#listTemplate').html()),
                 render: function () {
@@ -114,7 +121,7 @@
                     "change input": "change${table.name}"
                 },
 
-                saveProduct: function () {
+                save${table.name}: function () {
                     console.log("add clicked...");
                     if (this.model.isNew()) {
                         // new
@@ -125,20 +132,20 @@
                     }
                 },
 
-                deleteProduct: function () {
+                delete${table.name}: function () {
                     this.model.destroy();
-                    productListView. $el .html('');
-                    productListView.render();
+                    ${table.paramListViewName}. $el .html('');
+                    ${table.paramListViewName}.render();
                 }
             });
 
-            app.ProductListView = Backbone.View.extend({
+            app.${table.listViewName} = Backbone.View.extend({
 
                 el: '#contentDiv',
 
-                initialize: function (initialProducts) {
+                initialize: function (items) {
 
-                    this.collection = new app.ProductList(initialProducts);
+                    this.collection = new app.${table.listName}(items);
                     this.collection.fetch({
                         success: _.bind(function (collection, response) {
                             this.collection = collection;
@@ -163,16 +170,16 @@
                 },
 
                 renderItem: function (anItem) {
-                    var productView = new app.ProductView({
-                        model: product
+                    var ${table.paramViewName} = new app.${table.viewName}({
+                        model: anItem
                     });
-                    this. $el .append(productView.render().el);
+                    this. $el .append(${table.paramViewName}.render().el);
                 },
 
 
             });
 
-            window.productListView = new app.ProductListView();
+            window.${table.paramListViewName} = new app.${table.listViewName}();
             $('#header').html(new app.HeaderView().render().el);
 
         })();

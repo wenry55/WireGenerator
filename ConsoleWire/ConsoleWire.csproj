@@ -72,9 +72,11 @@
     <Content Include="data\entities.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="vm\ReportTemplate.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="vm\SigmaClient.vm" />
+    <None Include="vm\SigmaReport.vm" />
     <None Include="vm\SigmaServer.vm" />
   </ItemGroup>
   <ItemGroup>

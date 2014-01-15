@@ -32,7 +32,7 @@
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
             UriTemplate = "${table.name}")]
-        bool Save${table.name}(${table.name}Dto prod);
+        bool Save${table.name}(${table.name}Dto paramDto);
 
         [OperationContract]
         [WebInvoke(Method = "DELETE",
@@ -43,7 +43,7 @@
 
 // Service.cs
 
-        public ${table.name}Dto GetProduct(string ${table.paramKey})
+        public ${table.name}Dto ${table.functionNameForRead}(string ${table.paramKey})
         {
             string connStr = "Server=REVEAL-DEV;Database=reveal_dev_ovi;User ID=sa;Password=Reveal1!;Trusted_Connection=False;";
             SqlConnection connection = new SqlConnection(connStr);
@@ -56,9 +56,9 @@
                 ${table.name}Dto obj = new ${table.name}Dto();
                 if (reader.Read())
                 {
-                    obj.${table.key} = reader.GetInt32(0).ToString();
-                    obj.ProductName = reader.GetString(1);
-                    obj.ProductOwner = reader.GetString(2);
+#foreach ($col in $cols) 
+                    obj.$col.columnName = reader["$col.columnName"].ToString();
+#end
                 }
 
                 comm.Dispose();
@@ -75,7 +75,7 @@
             }
         }
 
-        public List<${table.name}Dto> GetAllProducts()
+        public List<${table.name}Dto> ${table.functionNameForList}()
         {
             string connStr = "Server=REVEAL-DEV;Database=reveal_dev_ovi;User ID=sa;Password=Reveal1!;Trusted_Connection=False;";
             SqlConnection connection = new SqlConnection(connStr);
@@ -88,9 +88,9 @@
                 while (reader.Read())
                 {
                     ${table.name}Dto obj = new ${table.name}Dto();
-                    obj.${table.key} = reader.GetInt32(0).ToString();
-                    obj.ProductName = reader.GetString(1);
-                    obj.ProductOwner = reader.GetString(2);
+#foreach ($col in $cols) 
+                    obj.$col.columnName = reader["$col.columnName"].ToString();
+#end
                     result.Add(obj);
                 }
 
@@ -108,16 +108,23 @@
             }
         }
 
-        public bool SaveProduct(${table.name}Dto prod)
+        public bool ${table.functionNameForSave}(${table.name}Dto paramDto)
         {
             string connStr = "Server=REVEAL-DEV;Database=reveal_dev_ovi;User ID=sa;Password=Reveal1!;Trusted_Connection=False;";
             SqlConnection connection = new SqlConnection(connStr);
             connection.Open();
-            SqlCommand comm = new SqlCommand("INSERT INTO Product VALUES (@ProductName, @ProductOwner)", connection);
+            SqlCommand comm = new SqlCommand("INSERT INTO ${table.name} VALUES (#foreach ($col in $cols)#if ($col.isIdentity != true) #if( $velocityCount > 1 ),#end@$col.columnName#end#end
+			)", connection);
             try
             {
-                comm.Parameters.AddWithValue("@ProductName", prod.ProductName.Trim());
-                comm.Parameters.AddWithValue("@ProductOwner", prod.ProductOwner.Trim());
+#foreach ($col in $cols) 
+#if ($col.isIdentity != true) 
+                comm.Parameters.AddWithValue("@$col.columnName", paramDto.${col.columnName}.Trim());
+#end
+#if ($foreach.count > 0) 
+aaaa
+#end
+#end
                 comm.ExecuteNonQuery();
                 comm.Dispose();
                 comm = null;
@@ -133,12 +140,12 @@
             }
         }
 
-        public bool RemoveProduct(string ${table.paramKey})
+        public bool ${table.functionNameForRemove}(string ${table.paramKey})
         {
             string connStr = "Server=REVEAL-DEV;Database=reveal_dev_ovi;User ID=sa;Password=Reveal1!;Trusted_Connection=False;";
             SqlConnection connection = new SqlConnection(connStr);
             connection.Open();
-            SqlCommand comm = new SqlCommand("DELETE FROM Product WHERE ${table.key} = @${table.key}", connection);
+            SqlCommand comm = new SqlCommand("DELETE FROM ${table.name} WHERE ${table.key} = @${table.key}", connection);
             try
             {
                 comm.Parameters.AddWithValue("@${table.key}", ${table.paramKey}.Trim());

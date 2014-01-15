@@ -25,5 +25,7 @@ namespace ConsoleWire.Entity
         public string columnName { get; set; }
         public List<string> choices { get; set; }
         public bool isKey { get; set; }
+        public bool isIdentity { get; set; }
+        public string dataType { get; set; }
     }
 }

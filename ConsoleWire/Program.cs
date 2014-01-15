@@ -65,6 +65,8 @@ namespace ConsoleWire
                             }
                         }
                         dbCol.isKey = aCol.Attribute("isKey") != null ? Boolean.Parse(aCol.Attribute("isKey").Value) : false;
+                        dbCol.isIdentity = aCol.Attribute("isIdentity") != null ? Boolean.Parse(aCol.Attribute("isIdentity").Value) : false;
+                        dbCol.dataType = aCol.Attribute("dataType") != null ? aCol.Attribute("dataType").Value : "string";
 
                         tbl.columns.Add(dbCol);
                     }
@@ -93,7 +95,7 @@ namespace ConsoleWire
                     vengine.Evaluate(context, sw, null, templateString);
                     sw.Close();
 
-                    // server side
+                    // client side
                     sw = new StreamWriter(@"c:\tmp\" + tbl.name.Trim() + ".html");
                     sr = new StreamReader(@"..\..\vm\SigmaClient.vm");
                     templateString = sr.ReadToEnd();
@@ -102,6 +104,14 @@ namespace ConsoleWire
                     vengine.Evaluate(context, sw, null, templateString);
                     sw.Close();
 
+                    // report side
+                    sw = new StreamWriter(@"c:\tmp\" + tbl.name.Trim() + ".rdl");
+                    sr = new StreamReader(@"..\..\vm\ReportTemplate.xml");
+                    templateString = sr.ReadToEnd();
+                    sr.Close();
+
+                    vengine.Evaluate(context, sw, null, templateString);
+                    sw.Close();
                 }
             }
             catch (System.Exception ex)
